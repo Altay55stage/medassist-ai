@@ -315,7 +315,7 @@ Les contributions sont les bienvenues !
 
 ```bash
 # 1. Fork + clone
-git clone https://github.com/YOUR_USERNAME/medassist-ai.git
+git clone https://github.com/Altay55stage/medassist-ai.git
 
 # 2. Créer une branche
 git checkout -b feature/ma-fonctionnalite
