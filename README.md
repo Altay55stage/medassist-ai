@@ -162,7 +162,7 @@ sequenceDiagram
 ### 1. Cloner le repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/medassist-ai.git
+git clone https://github.com/Altay55stage/medassist-ai.git
 cd medassist-ai
 ```
 
