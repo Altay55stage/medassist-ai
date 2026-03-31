@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import { sendMessageStream, sendAgentMessage, transcribeAudio } from "../api/chat";
+import { uploadDocument } from "../api/index";
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState(() => {
@@ -14,7 +15,26 @@ export default function ChatInterface() {
   const [isRecording, setIsRecording] = useState(false);
   const bottomRef = useRef(null);
   const mediaRecorderRef = useRef(null);
+  const fileInputRef = useRef(null);
   const chunksRef = useRef([]);
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    setMessages(prev => [...prev, { role: "assistant", content: `📁 Indexation du document: *${file.filename || file.name}*...` }]);
+    
+    try {
+      await uploadDocument(file);
+      setMessages(prev => [...prev, { role: "assistant", content: `✅ Document *${file.name}* ajouté avec succès à la base de connaissance médicale.` }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: "assistant", content: `❌ Erreur d'indexation: ${error.message}` }]);
+    } finally {
+      setIsLoading(false);
+      event.target.value = null; // Clear input
+    }
+  };
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -133,6 +153,21 @@ export default function ChatInterface() {
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendMessage(input)}
             disabled={isLoading}
           />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept=".pdf"
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+            className="p-2 rounded-full bg-gray-600 hover:bg-gray-500 disabled:opacity-40 transition-all"
+            title="Uploader un document PDF (RAG)"
+          >
+            📎
+          </button>
           <button
             onClick={isRecording ? stopRecording : startRecording}
             className={`p-2 rounded-full transition-all ${

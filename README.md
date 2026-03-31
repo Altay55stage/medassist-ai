@@ -161,9 +161,10 @@ C'est le "Cerveau" de l'application qui s'exécutera localement pour garantir le
 
 1. **Téléchargez et installez Ollama** depuis le site officiel : [ollama.com](https://ollama.com/)
 2. Ouvrez votre Terminal (Mac/Linux) ou Invite de commandes (Windows).
-3. Téléchargez le modèle **Mistral 7B** (le modèle recommandé pour ce projet) en exécutant :
+3. Téléchargez les modèles nécessaires (**Mistral** pour le chat et **Nomic Embed** pour les documents) :
    ```bash
    ollama pull mistral
+   ollama pull nomic-embed-text
    ```
 4. *Important* : Laissez l'application Ollama ouverte/tourner en arrière-plan sur votre ordinateur.
 
