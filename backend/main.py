@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from config import get_settings
-from routers import chat
+from routers import chat, predict
 
 settings = get_settings()
 
@@ -30,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(chat.router, prefix="/chat", tags=["Chat"])
+app.include_router(predict.router, prefix="/predict", tags=["Predictive"])
 
 
 @app.get("/health", tags=["System"])

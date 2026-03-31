@@ -3,6 +3,7 @@ Outils métier pour l'agent MedAssist.
 """
 from langchain_core.tools import tool
 from typing import Optional
+from models.predictive_engine import get_engine
 
 
 @tool
@@ -73,5 +74,91 @@ def recherche_pubmed(query: str, nb_resultats: int = 3) -> str:
     )
 
 
+@tool
+def _predict_diagnosis(
+    fever: bool,
+    pain_level: int,
+    duration_days: int,
+    age: int,
+    gender: str,
+) -> str:
+    """
+    Predict top-3 probable diagnoses from structured symptom inputs.
+    fever: boolean value (True if >= 38C)
+    pain_level: integer from 1 to 10
+    duration_days: duration of symptoms in days
+    age: patient age in years
+    gender: 'male', 'female', or 'other'
+    """
+    engine = get_engine()
+    res = engine.diagnosis.predict(fever, pain_level, duration_days, age, gender)
+    lines = [f"Prédiction de Diagnostic (Confiance: {res.confidence}%) :"]
+    for i, d in enumerate(res.top_diagnoses):
+        lines.append(f"  {i+1}. {d['diagnosis']} ({d['confidence_pct']}%)")
+    lines.append(f"⚠️ {res.disclaimer}")
+    return "\n".join(lines)
+
+
+@tool
+def _predict_risk(
+    systolic_bp: float,
+    diastolic_bp: float,
+    glucose: float,
+    bmi: float,
+    age: int,
+) -> str:
+    """
+    Calculate cardiovascular, diabetes complication, and sepsis risk scores.
+    systolic_bp: Systolic Blood Pressure (mmHg)
+    diastolic_bp: Diastolic Blood Pressure (mmHg)
+    glucose: Fasting blood glucose (mg/dL)
+    bmi: Body Mass Index (kg/m^2)
+    age: Patient age in years
+    """
+    engine = get_engine()
+    res = engine.risk.score(systolic_bp, diastolic_bp, glucose, bmi, age)
+    return (
+        f"Scores de Risque Clinique (Niveau global: {res.overall_risk_level}) :\n"
+        f"  • Risque Cardiovasculaire: {res.cardiovascular_risk_pct}%\n"
+        f"  • Risque de complication Diabète: {res.diabetes_complication_risk_pct}%\n"
+        f"  • Risque de Sepsis: {res.sepsis_risk_pct}%\n"
+        f"⚠️ {res.disclaimer}"
+    )
+
+
+@tool
+def _optimize_dosage(
+    drug_name: str,
+    weight_kg: float,
+    creatinine_clearance: float,
+    age: int,
+) -> str:
+    """
+    Recommend adjusted dosage considering renal function (CrCl) and age.
+    drug_name: generic drug name (e.g., 'amoxicillin', 'lisinopril')
+    weight_kg: patient weight (kg)
+    creatinine_clearance: Renal clearance (ml/min)
+    age: Patient age in years
+    """
+    engine = get_engine()
+    res = engine.dosage.optimize(drug_name, weight_kg, creatinine_clearance, age)
+    adj = "\n  • ".join(res.adjustments_applied)
+    return (
+        f"Recommandation Posologique pour {res.drug.capitalize()} :\n"
+        f"  • Dose recommandée : {res.recommended_dose_mg} {res.dose_unit}\n"
+        f"  • Intervalle : toutes les {res.interval_hours}h\n"
+        f"Ajustements appliqués :\n  • {adj}\n"
+        f"⚠️ {res.disclaimer}"
+    )
+
+
 def get_medical_tools():
-    return [calcul_dosage, interactions_medicamenteuses, recherche_pubmed]
+    return [
+        calcul_dosage, 
+        interactions_medicamenteuses, 
+        recherche_pubmed,
+        _predict_diagnosis,
+        _predict_risk,
+        _optimize_dosage
+    ]
+

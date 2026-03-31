@@ -47,6 +47,8 @@
 | 💬 **Chat médical RAG** | Répond en se basant sur vos documents médicaux indexés | ✅ |
 | 🔍 **Recherche vectorielle** | FAISS + embeddings Mistral pour une recherche sémantique précise | ✅ |
 | 🤖 **Agents autonomes** | Appel d'outils externes (APIs, calculs de dosages, interactions médicamenteuses) | ✅ |
+| 🔮 **IA Prédictive & ML** | Moteur Scikit-Learn pour les scores de risques cliniques et le diagnostic | ✅ |
+| 🕰️ **Mémoire Contextuelle** | Historique de conversation complet (type ChatGPT) couplé à l'IA Prédictive | ✅ |
 | 🖼️ **Multimodalité** | Analyse d'ordonnances (images), transcription vocale pour dictée médicale | ✅ |
 | 📊 **Sorties structurées** | Réponses typées via Pydantic — fiabilité garantie | ✅ |
 | 🔒 **Confidentialité** | Déployable 100% on-premise avec Ollama (aucune donnée en dehors) | ✅ |
@@ -150,57 +152,68 @@ sequenceDiagram
 
 ---
 
-## 🚀 Installation rapide
+## 🚀 Installation & Lancement
 
-### Prérequis
+L'application peut être lancée très facilement via **Docker**, mais nécessite de configurer votre moteur IA (Ollama) sur votre machine physique (pour bénéficier de toute la puissance de la carte graphique de votre ordinateur).
 
-- Python 3.11+
-- Node.js 18+
-- Docker & Docker Compose
-- [Ollama](https://ollama.ai) installé localement
+### Étape 1 : Préparer le moteur IA (Ollama)
+C'est le "Cerveau" de l'application qui s'exécutera localement pour garantir le secret médical.
 
-### 1. Cloner le repo
+1. **Téléchargez et installez Ollama** depuis le site officiel : [ollama.com](https://ollama.com/)
+2. Ouvrez votre Terminal (Mac/Linux) ou Invite de commandes (Windows).
+3. Téléchargez le modèle **Mistral 7B** (le modèle recommandé pour ce projet) en exécutant :
+   ```bash
+   ollama pull mistral
+   ```
+4. *Important* : Laissez l'application Ollama ouverte/tourner en arrière-plan sur votre ordinateur.
 
+### Étape 2 : Lancer MedAssist avec Docker (Recommandé)
+
+1. **Cloner le repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/medassist-ai.git
+   cd medassist-ai
+   ```
+
+2. **Démarrer les conteneurs**
+   Le fichier `docker-compose.yml` est préconfiguré pour connecter l'API directement à votre moteur Ollama local via `host.docker.internal`.
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Accéder à l'application**
+   Ouvrez votre navigateur : **👉 [http://localhost:3000](http://localhost:3000)**
+
+---
+
+### Alternative : Lancement Manuel (Développement)
+
+Si vous ne souhaitez pas utiliser Docker, vous pouvez tout lancer manuellement :
+
+**Terminal 1 : Le Backend (FastAPI)**
 ```bash
-git clone https://github.com/Altay55stage/medassist-ai.git
-cd medassist-ai
-```
 
-### 2. Configurer l'environnement
-
-```bash
-cp .env.example .env
-# Éditer .env avec vos clés API
-```
-
-### 3. Lancer avec Docker (recommandé)
-
-```bash
-docker-compose up --build
-```
-
-> 🎉 L'application est disponible sur `http://localhost:3000`
-
-### 4. Installation manuelle (développement)
-
-```bash
-# Backend
 cd backend
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
+```
 
-# Frontend (autre terminal)
+**Terminal 2 : Le Frontend (React)**
+```bash
 cd frontend
 npm install
 npm run dev
+# L'interface sera alors disponible sur http://localhost:5173
 ```
 
-### 5. Indexer vos documents médicaux
+---
 
+### 📚 Optionnel : Indexer vos propres documents médicaux (RAG)
+Pour que l'IA connaisse vos documents internes :
 ```bash
-# Déposer vos PDF/TXT dans data/documents/
+# Déposez vos PDF/TXT dans le dossier : data/documents/
 python backend/vectorstore/indexer.py --source data/documents/
 ```
 
@@ -222,16 +235,16 @@ MedAssist : D'après le Vidal 2024 (p.347), l'ibuprofène est contre-indiqué en
   [Source: vidal_2024.pdf, chunk 12]
 ```
 
-### Mode Agent
+### Mode Agent (Avec Mémoire & IA Prédictive)
 
-Pour des tâches complexes multi-étapes (calculs, recherches externes) :
+L'Agent conserve **tout l'historique de votre discussion** (comme ChatGPT). Il analyse le contexte pour appeler de manière autonome nos modèles de Machine Learning (Scikit-Learn) ou ses outils de recherche :
 
 ```
-Vous : Calcule la dose de paracétamol pour un enfant de 25 kg,
-       et vérifie les interactions avec l'amoxicilline.
+Vous : J'ai 45 ans, je suis une femme, j'ai de la fièvre et une douleur de 8/10 depuis 3 jours. Qu'est ce que j'ai ?
 
-MedAssist : [Appel outil: calcul_dosage] → 500mg toutes les 6h
-            [Appel outil: interactions_medicamenteuses] → Aucune interaction connue ✅
+MedAssist : [Analyse de l'historique...]
+            [Appel outil: _predict_diagnosis] → 60% probabilité Infection Urinaire
+            "En utilisant mes outils prédictifs, la pathologie la plus probable (60%) est une infection urinaire. Je vous recommande de consulter un médecin..."
 ```
 
 ### Mode Vocal
