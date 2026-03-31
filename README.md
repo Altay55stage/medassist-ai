@@ -139,8 +139,9 @@ sequenceDiagram
 | Couche | Technologie | Rôle |
 |---|---|---|
 | **LLM** | Mistral 7B (Ollama) / GPT-4o | Génération de réponses |
+| **IA Prédictive** | Scikit-learn (RandomForest, NumPy) | Diagnostics, Scores de risques cliniques |
 | **Orchestration** | LangChain 0.2 | RAG, Agents, Chains |
-| **Embeddings** | `mistral-embed` / `text-embedding-3-small` | Vectorisation des documents |
+| **Embeddings** | `nomic-embed-text` / `text-embedding-3-small` | Vectorisation des documents |
 | **Vector Store** | FAISS | Recherche sémantique |
 | **Backend** | FastAPI + Python 3.11 | API REST & WebSocket |
 | **Frontend** | React 18 + TailwindCSS | Interface utilisateur |
