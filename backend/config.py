@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     api_port: int = 8000
     debug: bool = True
     cors_origins: str = "http://localhost:3000"
+    data_dir: str = "./data/documents"
 
     model_config = {"env_file": ".env"}
 
