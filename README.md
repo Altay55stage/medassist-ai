@@ -206,7 +206,7 @@ python -m uvicorn main:app --reload --port 8000
 cd frontend
 npm install
 npm run dev
-# L'interface sera alors disponible sur http://localhost:5173
+# L'interface sera alors disponible sur http://localhost:3000
 ```
 
 ---
