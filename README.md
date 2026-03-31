@@ -50,6 +50,7 @@
 | 🔮 **IA Prédictive & ML** | Moteur Scikit-Learn pour les scores de risques cliniques et le diagnostic | ✅ |
 | 🕰️ **Mémoire Contextuelle** | Historique de conversation complet (type ChatGPT) couplé à l'IA Prédictive | ✅ |
 | 🖼️ **Multimodalité** | Analyse d'ordonnances (images), transcription vocale pour dictée médicale | ✅ |
+| 📁 **Upload en Direct** | Ajoutez vos PDF via l'interface (📎) pour une indexation RAG instantanée | ✅ |
 | 📊 **Sorties structurées** | Réponses typées via Pydantic — fiabilité garantie | ✅ |
 | 🔒 **Confidentialité** | Déployable 100% on-premise avec Ollama (aucune donnée en dehors) | ✅ |
 | 🌐 **Interface React** | UI moderne style ChatGPT avec historique, sources citées et mode vocal | ✅ |
@@ -251,6 +252,14 @@ MedAssist : [Analyse de l'historique...]
 ### Mode Vocal
 
 Cliquez sur 🎤 pour dicter votre question — la transcription Whisper est automatique.
+
+### 📎 Upload de Documents (RAG Dynamique)
+
+Vous pouvez ajouter vos propres connaissances médicales à l'IA sans toucher au code :
+1.  Cliquez sur l'icône **Trombone 📎** dans la barre de chat.
+2.  Sélectionnez un fichier **PDF**.
+3.  L'IA indexe le document en quelques secondes.
+4.  Posez vos questions en mode **📚 RAG** !
 
 ---
 
