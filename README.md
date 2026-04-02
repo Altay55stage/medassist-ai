@@ -353,6 +353,6 @@ git commit -m "feat: ajout du module d'analyse d'ordonnances"
 
 <div align="center">
 
-**Construit avec ❤️ dans le cadre du cours d'IA — LangChain · Mistral · RAG · Agents**
+**Construit avec Mohamed Amine Chemkhi, Malick Diop dans le cadre du cours d'IA — LangChain · Mistral · RAG · Agents**
 
 </div>
